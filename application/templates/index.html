@@ -1,2 +1,7 @@
 {% extends 'base.html' %}
-c
+{% block content %}
+  {% for post in posts %}
+    {{ post.title }}
+    {{ post.body }}
+  {% endfor %}
+{% endblock %}

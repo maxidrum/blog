@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="col-md-3">
-        <form action="{{ url_for('create_post') }}" method=post>
+        <form action="{{ url_for('create_post') }}" method=POST>
             {% for field in form %}
                 <div class="form-group">
                     {{ field.label(class='control-label') }}
