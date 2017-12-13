@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for
 
-from forms import PostFrom
+from forms import PostFrom, LoginForm
 from models import Post
 from application import app, db
 
@@ -19,3 +19,10 @@ def create_post():
 def main():
     posts = Post.query.all()
     return render_template("index.html", posts=posts)
+
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        # user = User.query.filter_by(username=form.data['email']).first()
+    return render_template("login.html", form=form)
