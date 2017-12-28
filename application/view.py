@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for,g
+from flask import render_template, request, redirect, url_for, g
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import login_user, logout_user, current_user, login_required
 
@@ -11,6 +11,7 @@ from application import app, db, login_manager
 def load_user(id):
     return User.query.get(int(id))
 
+
 @app.before_request
 def before_request():
     g.user = current_user
@@ -21,7 +22,7 @@ def before_request():
 def create_post():
     form = PostFrom(request.form)
     if request.method == 'POST' and form.validate_on_submit():
-        post = Post(title=form.title.data, body=form.body.data, author=g.user) #TODO: ref
+        post = Post(title=form.title.data, body=form.body.data, author=g.user)
         db.session.add(post)
         db.session.commit()
         return redirect(url_for("main"))
@@ -34,6 +35,7 @@ def main():
     posts = Post.query.all()
     return render_template("index.html", posts=posts)
 
+
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form)
@@ -43,6 +45,7 @@ def login():
             login_user(user)
         return redirect(url_for('main'))
     return render_template("login.html", form=form)
+
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -54,6 +57,7 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
+
 @app.route("/user/<nickname>", methods=['GET', 'POST'])
 def user(nickname):
     user = User.query.filter_by(nickname=nickname).first()
@@ -61,7 +65,13 @@ def user(nickname):
         return render_template('user.html', user=user)
     return redirect(url_for('main'))
 
+
 @app.route('/logout')
 def logout():
     logout_user()
+    return redirect(url_for('login'))
+
+
+@login_manager.unauthorized_handler
+def unauthorized():
     return redirect(url_for('login'))
