@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container col-md-3">
+
+    <form action="{{ url_for('register') }}" method=post>
+        {% for field in form %}
+        <div class="form-group">
+            {{ field.label(class='control-label') }}
+            {{ field(class='form-control') }}
+        </div>
+        {% endfor %}
+        <button class="btn btn-outline-success my-2 my-sm-0 btn-block">Register</button>
+    </form>
+</div>
+{% endblock%}

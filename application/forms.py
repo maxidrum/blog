@@ -10,8 +10,8 @@ class LoginForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
-    nickname = TextAreaField('nickname', [DataRequired()])
-    email = TextAreaField('email', [DataRequired()])
+    nickname = StringField('nickname', [DataRequired()])
+    email = StringField('email', [DataRequired()])
     password = PasswordField('password', [DataRequired()])
     confirm = PasswordField('repeat password', [
         DataRequired(),

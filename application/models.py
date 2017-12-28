@@ -24,6 +24,11 @@ class User(db.Model):
     password = db.Column(db.String(120))
     role = db.Column(db.SmallInteger, default=ROLE_USER)
 
+    def __init__(self, nickname, email, password):
+        self.nickname = nickname
+        self.email = email
+        self.password = password
+
     def __repr__(self):
         return '<User %r>' % (self.nickname)
 
@@ -31,7 +36,7 @@ class User(db.Model):
         return True
 
     def get_id(self):
-        return self.id
+        return unicode(self.id)
 
     def is_authenticated(self):
         return True

@@ -9,7 +9,7 @@ from application import app, db, login_manager
 
 @login_manager.user_loader
 def load_user(id):
-    return db.session.query(User).filter_by(id=id).first()
+    return User.query.get(int(id))
 
 @app.before_request
 def before_request():
@@ -46,10 +46,14 @@ def login():
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegisterForm(request.form)
-    password_hash = generate_password_hash(form.password.data)
-    return 'register'
+    if request.method == 'POST' and form.validate_on_submit():
+        user = User(form.nickname.data, form.email.data, generate_password_hash(form.password.data))
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for('login'))
+    return render_template('register.html', form=form)
 
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect('login')
+    return redirect(url_for('login'))
