@@ -1,18 +1,6 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <title>Blog app</title>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
-          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-</head>
-<body>
+{% extends 'base.html' %}
+{% block content %}
 <div class="container col-md-3">
-
     <form action="{{ url_for('login') }}" method=post>
         {% for field in form %}
         <div class="form-group">
@@ -20,9 +8,9 @@
             {{ field(class='form-control') }}
         </div>
         {% endfor %}
-        <button formaction="{{ url_for('register')}}" class="btn btn-outline-success my-2 my-sm-0 btn-block">Register</button>
+        <button formaction="{{ url_for('register')}}" class="btn btn-outline-success my-2 my-sm-0 btn-block">Register
+        </button>
         <button class="btn btn-outline-success my-2 btn-block">Sign in</button>
     </form>
 </div>
-</body>
-</html>
+{% endblock %}

@@ -1,7 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
-  {% for post in posts %}
-    {{ post.title }}
-    {{ post.body }}
-  {% endfor %}
+{%  for post in posts %}
+<div class="row">
+  <div class="col-sm-8 blog-main">
+    <div class="blog-post">
+      <h2 class="blog-post-title">{{post.title}}</h2>
+      <p class="blog-post-meta">{{post.created}} by <a href="#">author</a></p>
+      <p>{{post.body}}</p>
+      <hr>
+    </div><!-- /.blog-main -->
+  </div>
+</div>
+{% endfor %}
 {% endblock %}

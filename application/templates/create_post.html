@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="col-md-3">
-        <form action="{{ url_for('create_post') }}" method=POST>
-            {% for field in form %}
-                <div class="form-group">
-                    {{ field.label(class='control-label') }}
-                    {{ field(class='form-control') }}
-                </div>
-            {% endfor %}
-            <button type="submit" class="btn btn-primary btn-sm">Submit</button>
-        </form>
-    </div>
+<div class="col-md-4">
+    <form action="{{ url_for('create_post') }}" method=POST>
+        {% for field in form %}
+        <div class="form-group">
+            {{ field.label(class='control-label') }}
+            {{ field(class='form-control') }}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Submit</button>
+    </form>
+</div>
 {% endblock %}

@@ -5,6 +5,7 @@ ROLE_USER = 0
 ROLE_ADMIN = 1
 
 class Post(db.Model):
+    # __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(140))
     body = db.Column(db.Text)
@@ -18,6 +19,7 @@ class Post(db.Model):
 
 
 class User(db.Model):
+    # __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     nickname = db.Column(db.String(64), unique=True)
     email = db.Column(db.String(120), unique=True)

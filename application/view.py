@@ -17,10 +17,11 @@ def before_request():
 
 
 @app.route("/create", methods=['GET', 'POST'])
+@login_required
 def create_post():
-    form = PostFrom()
-    if request.method == 'POST':
-        post = Post(title=form.data['title'], body=form.data['body']) #TODO: ref
+    form = PostFrom(request.form)
+    if request.method == 'POST' and form.validate_on_submit():
+        post = Post(title=form.title.data, body=form.body.data) #TODO: ref
         db.session.add(post)
         db.session.commit()
         return redirect(url_for("main"))
@@ -52,6 +53,13 @@ def register():
         db.session.commit()
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
+
+@app.route("/user/<nickname>", methods=['GET', 'POST'])
+def user(nickname):
+    user = User.query.filter_by(nickname=nickname).first()
+    if user:
+        return render_template()
+    return redirect(url_for('main'))
 
 @app.route('/logout')
 def logout():
