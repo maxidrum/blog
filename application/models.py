@@ -5,11 +5,11 @@ ROLE_USER = 0
 ROLE_ADMIN = 1
 
 class Post(db.Model):
-    # __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(140))
     body = db.Column(db.Text)
     created = db.Column(db.DateTime, default=datetime.now())
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __init__(self, *args, **kwargs):
         super(Post, self).__init__(*args, **kwargs)
@@ -19,12 +19,12 @@ class Post(db.Model):
 
 
 class User(db.Model):
-    # __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     nickname = db.Column(db.String(64), unique=True)
     email = db.Column(db.String(120), unique=True)
     password = db.Column(db.String(120))
     role = db.Column(db.SmallInteger, default=ROLE_USER)
+    posts = db.relationship('Post', backref='author', lazy='dynamic')
 
     def __init__(self, nickname, email, password):
         self.nickname = nickname

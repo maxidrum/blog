@@ -21,7 +21,7 @@ def before_request():
 def create_post():
     form = PostFrom(request.form)
     if request.method == 'POST' and form.validate_on_submit():
-        post = Post(title=form.title.data, body=form.body.data) #TODO: ref
+        post = Post(title=form.title.data, body=form.body.data, author=g.user) #TODO: ref
         db.session.add(post)
         db.session.commit()
         return redirect(url_for("main"))
@@ -58,7 +58,7 @@ def register():
 def user(nickname):
     user = User.query.filter_by(nickname=nickname).first()
     if user:
-        return render_template()
+        return render_template('user.html', user=user)
     return redirect(url_for('main'))
 
 @app.route('/logout')
