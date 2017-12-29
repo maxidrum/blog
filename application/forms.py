@@ -4,19 +4,18 @@ from wtforms.validators import DataRequired, Email, EqualTo
 
 
 class LoginForm(FlaskForm):
-    email = StringField('Email address', [DataRequired(), Email()])  # render_kw={"placeholder": "Email address"}
+    email = StringField('Email address', [DataRequired(), Email()])
     password = PasswordField('Password', [DataRequired()])
     remember_me = BooleanField('remember me', default=False)
 
 
 class RegisterForm(FlaskForm):
-    nickname = StringField('nickname', [DataRequired()])
-    email = StringField('email', [DataRequired()])
-    password = PasswordField('password', [DataRequired()])
+    nickname = StringField([DataRequired()], render_kw={"placeholder": "Nickname"})
+    email = StringField([DataRequired()], render_kw={"placeholder": "Email"})
+    password = PasswordField([DataRequired()], render_kw={"placeholder": "Password"})
     confirm = PasswordField('repeat password', [
         DataRequired(),
-        EqualTo('password', message='passwords must match')
-    ])
+        EqualTo('password', message='passwords must match')], render_kw={"placeholder": "Repeat password"})
 
 
 class PostFrom(FlaskForm):

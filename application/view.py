@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, g
+from flask import render_template, request, redirect, url_for, g, flash
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import login_user, logout_user, current_user, login_required
 
@@ -43,7 +43,8 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.password, form.password.data):
             login_user(user)
-        return redirect(url_for('main'))
+            return redirect(url_for('main'))
+        flash('Email or Password is invalid', 'error')
     return render_template("login.html", form=form)
 
 
@@ -51,6 +52,9 @@ def login():
 def register():
     form = RegisterForm(request.form)
     if request.method == 'POST' and form.validate_on_submit():
+        if User.query.filter_by(email=form.email.data).first():
+            flash('existig email', 'error')
+            return redirect(url_for('register'))
         user = User(form.nickname.data, form.email.data, generate_password_hash(form.password.data))
         db.session.add(user)
         db.session.commit()
@@ -59,8 +63,9 @@ def register():
 
 
 @app.route("/user/<nickname>", methods=['GET', 'POST'])
+@login_required
 def user(nickname):
-    user = User.query.filter_by(nickname=nickname).first()
+    user = User.query.filter_by(nickname=nickname).first_or_404()
     if user:
         return render_template('user.html', user=user)
     return redirect(url_for('main'))
@@ -75,3 +80,8 @@ def logout():
 @login_manager.unauthorized_handler
 def unauthorized():
     return redirect(url_for('login'))
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html')
