@@ -28,12 +28,23 @@ class LoginForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
-    nickname = StringField([DataRequired()], render_kw={"placeholder": "Nickname"})
+    nickname = StringField([DataRequired()], render_kw={"placeholder": "Nickname", 'autofocus': True})
     email = StringField([DataRequired()], render_kw={"placeholder": "Email"})
     password = PasswordField([DataRequired()], render_kw={"placeholder": "Password"})
     confirm = PasswordField('repeat password', [
         DataRequired(),
         EqualTo('password', message='passwords must match')], render_kw={"placeholder": "Repeat password"})
+
+    def validate(self):
+        check_validate = super(RegisterForm, self).validate()
+        if not check_validate:
+            return False
+
+        user = User.query.filter_by(email=self.email.data).first()
+        if user:
+            self.email.errors.append('User with that email already exists')
+            return False
+        return True
 
 
 class PostFrom(FlaskForm):
