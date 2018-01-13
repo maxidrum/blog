@@ -1,16 +1,31 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container col-md-3">
-    <form action="{{ url_for('login') }}" method=post>
-        {% for field in form %}
+<div class="container col-md-offset-3 col-md-5">
+    <form class="form-signin" method="POST">
+        <h2 class="form-signin-heading">Please sign in</h2>
         <div class="form-group">
-            {{ field.label(class='control-label') }}
-            {{ field(class='form-control') }}
+            {{form.email(class='form-control', placeholder="Email address", autofocus=ture)}}
         </div>
-        {% endfor %}
-        <button formaction="{{ url_for('register')}}" class="btn btn-outline-success my-2 my-sm-0 btn-block">Register
-        </button>
+        {% for error in form.errors.email %}
+            <div class="alert alert-warning" role="alert">
+                {{error}}
+            </div>
+            {% endfor %}
+        <div class="form-group">
+            {{form.password(class='form-control', placeholder="Password")}}
+        </div>
+        {% for error in form.errors.password %}
+            <div class="alert alert-warning" role="alert">
+                {{error}}
+            </div>
+            {% endfor %}
+        <div class="checkbox">
+            <label>
+                {{form.remember_me}} Remember me
+            </label>
+        </div>
         <button class="btn btn-outline-success my-2 btn-block">Sign in</button>
     </form>
-</div>
+    <a href="{{url_for('register')}}">register</a>
+</div> <!-- /container -->
 {% endblock %}

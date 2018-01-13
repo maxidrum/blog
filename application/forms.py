@@ -1,12 +1,30 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, TextAreaField, BooleanField
 from wtforms.validators import DataRequired, Email, EqualTo
+from werkzeug.security import check_password_hash
+
+from models import User
 
 
 class LoginForm(FlaskForm):
     email = StringField('Email address', [DataRequired(), Email()])
     password = PasswordField('Password', [DataRequired()])
     remember_me = BooleanField('remember me', default=False)
+
+    def validate(self):
+        check_validate = super(LoginForm, self).validate()
+        if not check_validate:
+            return False
+
+        user = User.query.filter_by(email=self.email.data).first()
+        if not user:
+            self.email.errors.append('Invalid email or password')
+            return False
+
+        if not check_password_hash(user.password, self.password.data):
+            self.email.errors.append('Invalid email or password')
+            return False
+        return True
 
 
 class RegisterForm(FlaskForm):
