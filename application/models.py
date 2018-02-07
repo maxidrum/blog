@@ -1,5 +1,6 @@
 from application import db
 from datetime import datetime
+from werkzeug.security import check_password_hash, generate_password_hash
 
 ROLE_USER = 0
 ROLE_ADMIN = 1
@@ -42,3 +43,9 @@ class User(db.Model):
 
     def is_authenticated(self):
         return True
+
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)

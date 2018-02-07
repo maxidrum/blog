@@ -1,5 +1,4 @@
 from flask import render_template, request, redirect, url_for, g, flash
-from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import login_user, logout_user, current_user, login_required
 
 from forms import PostFrom, LoginForm, RegisterForm
@@ -17,7 +16,7 @@ def before_request():
     g.user = current_user
 
 
-@app.route("/create", methods=['GET', 'POST'])
+@app.route("/create_post", methods=['GET', 'POST'])
 @login_required
 def create_post():
     form = PostFrom(request.form)
@@ -28,12 +27,29 @@ def create_post():
         return redirect(url_for("main"))
     return render_template("create_post.html", form=form)
 
+# @app.route("edit_post", methods=['GET', 'POST'])
+# @login_required
+# def edit_post():
+#     form =
+#     if request.method == 'POST' and form.validate_on_submit():
+#         pass
+#         return redirect(url_for())
+#     return render_template()
+#
+# @app.route("delete_post", methods=['GET', 'POST'])
+# def delete_post():
+#     form =
+#     if request.method == 'POST' and form.validate_on_submit():
+#         pass
+#         return redirect(url_for())
+#     return render_template()
+
 
 @app.route("/")
 @login_required
 def main():
     posts = Post.query.all()
-    return render_template("index.html", posts=posts)
+    return render_template("index.html", title='Home', posts=posts)
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -41,25 +57,22 @@ def login():
     form = LoginForm(request.form)
     if request.method == 'POST' and form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user and check_password_hash(user.password, form.password.data):
+        if user and user.check_password(form.password.data):
             login_user(user)
             return redirect(url_for('main'))
-        flash('Email or Password is invalid', 'error')
-    return render_template("login.html", form=form)
+    return render_template("login.html", title='Login', form=form)
 
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegisterForm(request.form)
     if request.method == 'POST' and form.validate_on_submit():
-        if User.query.filter_by(email=form.email.data).first():
-            flash('existig email', 'error')
-            return redirect(url_for('register'))
-        user = User(form.nickname.data, form.email.data, generate_password_hash(form.password.data))
+        user = User(form.nickname.data, form.email.data)
+        user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
         return redirect(url_for('login'))
-    return render_template('register.html', form=form)
+    return render_template('register.html', title='Register', form=form)
 
 
 @app.route("/user/<nickname>", methods=['GET', 'POST'])
@@ -67,7 +80,7 @@ def register():
 def user(nickname):
     user = User.query.filter_by(nickname=nickname).first_or_404()
     if user:
-        return render_template('user.html', user=user)
+        return render_template('user.html', title='Profile', user=user)
     return redirect(url_for('main'))
 
 
@@ -84,4 +97,4 @@ def unauthorized():
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('404.html')
+    return render_template('404.html'), 404

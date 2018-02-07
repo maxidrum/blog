@@ -13,6 +13,11 @@
             {{ field(class='form-control') }}
         </div>
         {% endfor %}
+        {% for error in form.errors.password %}
+        <div class="alert alert-warning" role="alert">
+            {{error}}
+        </div>
+        {% endfor %}
         <button class="btn btn-outline-success my-2 my-sm-0 btn-block">Register</button>
     </form>
 </div>
