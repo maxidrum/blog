@@ -5,6 +5,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 ROLE_USER = 0
 ROLE_ADMIN = 1
 
+
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(140))
@@ -25,15 +26,16 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True)
     password = db.Column(db.String(120))
     role = db.Column(db.SmallInteger, default=ROLE_USER)
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     posts = db.relationship('Post', backref='author', lazy='dynamic')
 
     def __init__(self, nickname, email, password):
         self.nickname = nickname
         self.email = email
-        self.password = password
+        self.password = generate_password_hash(password)
 
     def __repr__(self):
-        return '<User %r>' % (self.nickname)
+        return self.nickname
 
     def is_active(self):
         return True
@@ -43,9 +45,6 @@ class User(db.Model):
 
     def is_authenticated(self):
         return True
-
-    def set_password(self, password):
-        self.password = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password, password)

@@ -9,12 +9,14 @@
                         <img src="{{ url_for('static',filename='1.png')}}" height="150" width="150">
                     </div>
                     <div class="col-sm-6 col-md-8">
-                        <h4>first last name </h4>
-                        <small><cite>test cite<i class="glyphicon glyphicon-map-marker"></i></cite></small><p>
+                        <h4>User: {{ user.nickname }}</h4>
+                        {% if user.last_seen %}<p>Last seen on: {{ user.last_seen }}</p>{% endif %}
+                        <small><cite>test cite<i class="glyphicon glyphicon-map-marker"></i></cite></small>
+                        <p>
                             <i></i>email@example.com
                             <br/>
                             <i></i><a href="">www.www.com</a>
-                        <br/>
+                            <br/>
                     </div>
                 </div>
                 <hr/>

@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import render_template, request, redirect, url_for, g, flash
 from flask_login import login_user, logout_user, current_user, login_required
 
@@ -13,7 +14,9 @@ def load_user(id):
 
 @app.before_request
 def before_request():
-    g.user = current_user
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.utcnow()
+        db.session.commit()
 
 
 @app.route("/create_post", methods=['GET', 'POST'])
@@ -21,11 +24,11 @@ def before_request():
 def create_post():
     form = PostFrom(request.form)
     if request.method == 'POST' and form.validate_on_submit():
-        post = Post(title=form.title.data, body=form.body.data, author=g.user)
+        post = Post(title=form.title.data, body=form.body.data, author=current_user)
         db.session.add(post)
         db.session.commit()
         return redirect(url_for("main"))
-    return render_template("create_post.html", form=form)
+    return render_template("create_post.html", title="Create post", form=form)
 
 # @app.route("edit_post", methods=['GET', 'POST'])
 # @login_required
@@ -45,15 +48,17 @@ def create_post():
 #     return render_template()
 
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 @login_required
 def main():
-    posts = Post.query.all()
+    posts = Post.query.order_by(Post.title) #.paginate(1, 2, False).items
     return render_template("index.html", title='Home', posts=posts)
 
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('main'))
     form = LoginForm(request.form)
     if request.method == 'POST' and form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
@@ -65,10 +70,11 @@ def login():
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('main'))
     form = RegisterForm(request.form)
     if request.method == 'POST' and form.validate_on_submit():
-        user = User(form.nickname.data, form.email.data)
-        user.set_password(form.password.data)
+        user = User(form.nickname.data, form.email.data, form.password.data)
         db.session.add(user)
         db.session.commit()
         return redirect(url_for('login'))

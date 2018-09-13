@@ -48,5 +48,8 @@ class RegisterForm(FlaskForm):
 
 
 class PostFrom(FlaskForm):
-    title = StringField('Title')
-    body = TextAreaField('Body')
+    title = StringField('Title', [DataRequired()])
+    body = TextAreaField('Body', [DataRequired()])
+
+    def validate(self):
+        return super(PostFrom, self).validate()
