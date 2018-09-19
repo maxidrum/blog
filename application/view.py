@@ -43,23 +43,6 @@ def create_post():
         return redirect(url_for("main"))
     return render_template("create_post.html", title="Create post", form=form)
 
-# @app.route("edit_post", methods=['GET', 'POST'])
-# @login_required
-# def edit_post():
-#     form =
-#     if request.method == 'POST' and form.validate_on_submit():
-#         pass
-#         return redirect(url_for())
-#     return render_template()
-#
-# @app.route("delete_post", methods=['GET', 'POST'])
-# def delete_post():
-#     form =
-#     if request.method == 'POST' and form.validate_on_submit():
-#         pass
-#         return redirect(url_for())
-#     return render_template()
-
 
 @app.route("/", methods=['GET', 'POST'])
 @login_required
