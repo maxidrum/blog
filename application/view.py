@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import render_template, request, redirect, url_for, g, flash
+from flask import render_template, request, redirect, url_for
 from flask_login import login_user, logout_user, current_user, login_required
 
 from forms import PostFrom, LoginForm, RegisterForm
@@ -17,6 +17,19 @@ def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
+
+
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('main'))
+    form = LoginForm(request.form)
+    if request.method == 'POST' and form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            return redirect(url_for('main'))
+    return render_template("login.html", title='Login', form=form)
 
 
 @app.route("/create_post", methods=['GET', 'POST'])
@@ -53,19 +66,6 @@ def create_post():
 def main():
     posts = Post.query.order_by(Post.title) #.paginate(1, 2, False).items
     return render_template("index.html", title='Home', posts=posts)
-
-
-@app.route("/login", methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('main'))
-    form = LoginForm(request.form)
-    if request.method == 'POST' and form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user and user.check_password(form.password.data):
-            login_user(user)
-            return redirect(url_for('main'))
-    return render_template("login.html", title='Login', form=form)
 
 
 @app.route("/register", methods=['GET', 'POST'])
