@@ -8,4 +8,5 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://root:root@localhost/blog"
     WTF_CSRF_ENABLED = False
     SECRET_KEY = os.urandom(24)
-    REMEMBER_COOKIE_DURATION = datetime.timedelta(seconds=20)
+    REMEMBER_COOKIE_DURATION = datetime.timedelta(minutes=15)
+    PERMANENT_SESSION_LIFETIME = datetime.timedelta(minutes=15)
